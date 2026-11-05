@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARM Holdings — Analisi Completa</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #0d1117;
+    color: #e6edf3;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    min-height: 100vh;
+    padding: 24px;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: linear-gradient(135deg, #1a1f2e 0%, #0d1117 100%);
+    border: 1px solid #30363d;
+    border-radius: 16px;
+    padding: 28px 32px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .header-left { display: flex; align-items: center; gap: 20px; }
+
+  .logo {
+    width: 60px; height: 60px;
+    background: linear-gradient(135deg, #0ea5e9, #6366f1);
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; font-weight: 900; color: #fff; letter-spacing: -1px;
+  }
+
+  .ticker { font-size: 28px; font-weight: 700; color: #f0f6fc; }
+  .company { font-size: 14px; color: #8b949e; margin-top: 2px; }
+
+  .price-block { text-align: right; }
+  .price { font-size: 36px; font-weight: 700; color: #f0f6fc; }
+  .price-change {
+    display: inline-block;
+    background: #1a4731; color: #3fb950;
+    padding: 4px 12px; border-radius: 20px;
+    font-size: 14px; font-weight: 600; margin-top: 4px;
+  }
+
+  .badge-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+  .badge {
+    padding: 4px 12px; border-radius: 20px;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.5px;
+  }
+  .badge-buy    { background: #1a4731; color: #3fb950; }
+  .badge-risk   { background: #3b1a1a; color: #f85149; }
+  .badge-conf   { background: #1c2a3a; color: #58a6ff; }
+  .badge-sector { background: #251d3a; color: #bc8cff; }
+
+  .date-tag { font-size: 12px; color: #8b949e; margin-top: 6px; }
+
+  /* ── GRID ── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+
+  @media (max-width: 900px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 12px;
+    padding: 20px 22px;
+  }
+
+  .card-title {
+    font-size: 11px; font-weight: 700; letter-spacing: 1px;
+    text-transform: uppercase; color: #8b949e;
+    margin-bottom: 16px; display: flex; align-items: center; gap: 8px;
+  }
+  .card-title .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+  }
+
+  /* ── CONSENSUS BOX ── */
+  .consensus {
+    background: linear-gradient(135deg, #1a4731 0%, #0d2818 100%);
+    border: 1px solid #238636;
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+  }
+  .consensus-label { font-size: 13px; color: #7ee787; font-weight: 600; }
+  .consensus-action { font-size: 26px; font-weight: 800; color: #3fb950; }
+  .consensus-detail { font-size: 13px; color: #8b949e; margin-top: 4px; }
+  .score-pill {
+    background: #0d2818; border: 1px solid #238636;
+    border-radius: 50px; padding: 10px 20px; text-align: center;
+  }
+  .score-num { font-size: 28px; font-weight: 800; color: #3fb950; }
+  .score-sub { font-size: 11px; color: #7ee787; }
+
+  /* ── INDICATOR ROW ── */
+  .ind-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 9px 0;
+    border-bottom: 1px solid #21262d;
+    font-size: 14px;
+  }
+  .ind-row:last-child { border-bottom: none; }
+  .ind-label { color: #8b949e; }
+  .ind-value { font-weight: 600; }
+
+  .bull  { color: #3fb950; }
+  .bear  { color: #f85149; }
+  .neut  { color: #d29922; }
+  .blue  { color: #58a6ff; }
+  .purple{ color: #bc8cff; }
+
+  /* ── TIMEFRAME TABLE ── */
+  .tf-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .tf-table th {
+    text-align: left; padding: 8px 10px;
+    color: #8b949e; font-size: 11px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    border-bottom: 1px solid #30363d;
+  }
+  .tf-table td {
+    padding: 10px 10px;
+    border-bottom: 1px solid #21262d;
+  }
+  .tf-table tr:last-child td { border-bottom: none; }
+  .tf-label { font-weight: 600; }
+  .tf-note { font-size: 11px; color: #8b949e; margin-top: 2px; }
+
+  .pill {
+    display: inline-block; padding: 3px 10px;
+    border-radius: 20px; font-size: 11px; font-weight: 700;
+  }
+  .pill-bull  { background: #1a4731; color: #3fb950; }
+  .pill-bear  { background: #3b1a1a; color: #f85149; }
+  .pill-neut  { background: #2a2018; color: #d29922; }
+  .pill-strong{ background: #1c2a3a; color: #58a6ff; }
+  .pill-mod   { background: #1e1e2e; color: #bc8cff; }
+  .pill-weak  { background: #1e1e1e; color: #8b949e; }
+
+  /* ── PROGRESS BAR ── */
+  .rsi-bar {
+    height: 6px; background: #21262d; border-radius: 3px;
+    margin-top: 4px; overflow: hidden;
+  }
+  .rsi-fill {
+    height: 100%; border-radius: 3px;
+    background: linear-gradient(90deg, #3fb950, #d29922, #f85149);
+  }
+
+  /* ── PATTERN CARDS ── */
+  .pattern-item {
+    display: flex; gap: 14px; align-items: flex-start;
+    padding: 12px 0; border-bottom: 1px solid #21262d;
+  }
+  .pattern-item:last-child { border-bottom: none; }
+  .pattern-icon {
+    width: 36px; height: 36px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; flex-shrink: 0;
+  }
+  .icon-bull { background: #1a4731; }
+  .icon-warn { background: #2a2018; }
+  .pattern-name { font-size: 14px; font-weight: 600; }
+  .pattern-tf   { font-size: 11px; color: #8b949e; margin: 2px 0; }
+  .pattern-desc { font-size: 12px; color: #8b949e; }
+
+  /* ── LEVELS ── */
+  .level-item {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 0; border-bottom: 1px solid #21262d;
+  }
+  .level-item:last-child { border-bottom: none; }
+  .level-left { display: flex; align-items: center; gap: 10px; }
+  .level-dot  { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-res    { background: #f85149; }
+  .dot-sup    { background: #3fb950; }
+  .dot-crit   { background: #d29922; }
+  .level-name { font-size: 13px; font-weight: 600; }
+  .level-sub  { font-size: 11px; color: #8b949e; }
+  .level-price{ font-size: 15px; font-weight: 700; }
+
+  /* ── FUNDAMENTAL ── */
+  .fund-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .fund-item { background: #0d1117; border-radius: 8px; padding: 12px 14px; }
+  .fund-key  { font-size: 11px; color: #8b949e; margin-bottom: 4px; }
+  .fund-val  { font-size: 15px; font-weight: 700; }
+
+  /* ── RECOMMENDATION ── */
+  .rec-box {
+    background: linear-gradient(135deg, #0d1f38, #0d1117);
+    border: 1px solid #1f6feb;
+    border-radius: 12px; padding: 22px 24px;
+  }
+  .rec-title { font-size: 13px; color: #58a6ff; font-weight: 700; margin-bottom: 14px; }
+  .rec-action{ font-size: 22px; font-weight: 800; color: #58a6ff; margin-bottom: 8px; }
+  .rec-detail { font-size: 14px; color: #8b949e; line-height: 1.6; }
+  .rec-rules  { margin-top: 14px; }
+  .rec-rule   { display: flex; gap: 8px; font-size: 13px; color: #c9d1d9; padding: 5px 0; }
+  .rec-rule::before { content: '→'; color: #58a6ff; }
+
+  /* ── FOOTER ── */
+  .footer {
+    text-align: center; margin-top: 28px;
+    font-size: 12px; color: #8b949e; line-height: 1.8;
+  }
+  .footer strong { color: #c9d1d9; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <div class="logo">ARM</div>
+    <div>
+      <div class="ticker">ARM <span style="color:#8b949e;font-size:16px;font-weight:400">NASDAQ</span></div>
+      <div class="company">Arm Holdings plc — Semiconductor IP Licensing</div>
+      <div class="badge-row">
+        <span class="badge badge-buy">BUY</span>
+        <span class="badge badge-conf">Confidenza Media-Alta</span>
+        <span class="badge badge-risk">Rischio Alto</span>
+        <span class="badge badge-sector">Semiconductors</span>
+      </div>
+    </div>
+  </div>
+  <div class="price-block">
+    <div class="price">$162.07</div>
+    <div><span class="price-change">▲ +1.30% oggi &nbsp;|&nbsp; +9.64% sett.</span></div>
+    <div class="date-tag">Aggiornato: 16 Aprile 2026</div>
+  </div>
+</div>
+
+<!-- CONSENSUS -->
+<div class="consensus">
+  <div>
+    <div class="consensus-label">VERDETTO MULTI-AGENTE</div>
+    <div class="consensus-action">BUY — Mostly Bullish</div>
+    <div class="consensus-detail">Tecnica: +2 &nbsp;|&nbsp; Sentiment: +3 &nbsp;|&nbsp; Risk: −3 &nbsp;|&nbsp; Net Score: +2</div>
+  </div>
+  <div style="display:flex;gap:12px;flex-wrap:wrap">
+    <div class="score-pill">
+      <div class="score-num" style="color:#3fb950">3/5</div>
+      <div class="score-sub">TF Bullish</div>
+    </div>
+    <div class="score-pill">
+      <div class="score-num" style="color:#58a6ff">65.7</div>
+      <div class="score-sub">RSI Daily</div>
+    </div>
+    <div class="score-pill">
+      <div class="score-num" style="color:#bc8cff">GX</div>
+      <div class="score-sub">Golden Cross</div>
+    </div>
+  </div>
+</div>
+
+<!-- ROW 1: Tecnica + Fondamentali -->
+<div class="grid-2">
+
+  <!-- ANALISI TECNICA -->
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#3fb950"></span>Analisi Tecnica — Daily</div>
+
+    <div class="ind-row">
+      <span class="ind-label">Prezzo</span>
+      <span class="ind-value">$162.07</span>
+    </div>
+    <div class="ind-row">
+      <span class="ind-label">RSI (14)</span>
+      <span class="ind-value bull">65.68 — Bullish ▲</span>
+    </div>
+    <div style="padding: 4px 0 12px">
+      <div class="rsi-bar"><div class="rsi-fill" style="width:65.68%"></div></div>
+      <div style="display:flex;justify-content:space-between;font-size:10px;color:#8b949e;margin-top:3px">
+        <span>0</span><span>30 OS</span><span>50</span><span>70 OB</span><span>100</span>
+      </div>
+    </div>
+    <div class="ind-row">
+      <span class="ind-label">MACD</span>
+      <span class="ind-value bull">Crossover Rialzista</span>
+    </div>
+    <div class="ind-row">
+      <span class="ind-label">Bollinger Rating</span>
+      <span class="ind-value bull">2 — BUY</span>
+    </div>
+    <div class="ind-row">
+      <span class="ind-label">EMA 50</span>
+      <span class="ind-value">$137.24</span>
+    </div>
+    <div class="ind-row">
+      <span class="ind-label">EMA 200</span>
+      <span class="ind-value">$134.08</span>
+    </div>
+    <div class="ind-row">
+      <span class="ind-label">Golden Cross</span>
+      <span class="ind-value bull">✓ EMA50 > EMA200</span>
+    </div>
+    <div class="ind-row">
+      <span class="ind-label">Distanza da 20 SMA</span>
+      <span class="ind-value bear">+5% — Esteso</span>
+    </div>
+    <div class="ind-row">
+      <span class="ind-label">Volatilità (BBW)</span>
+      <span class="ind-value bear">Alta > 0.1</span>
+    </div>
+  </div>
+
+  <!-- FONDAMENTALI -->
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#bc8cff"></span>Analisi Fondamentale</div>
+    <div class="fund-grid" style="margin-bottom:14px">
+      <div class="fund-item">
+        <div class="fund-key">Business Model</div>
+        <div class="fund-val purple" style="font-size:13px">IP Licensing</div>
+      </div>
+      <div class="fund-item">
+        <div class="fund-key">P/E Ratio</div>
+        <div class="fund-val bear">&gt;100x</div>
+      </div>
+      <div class="fund-item">
+        <div class="fund-key">Revenue Growth</div>
+        <div class="fund-val bull">+25-30% YoY</div>
+      </div>
+      <div class="fund-item">
+        <div class="fund-key">Quota Mobile</div>
+        <div class="fund-val blue">~99%</div>
+      </div>
+      <div class="fund-item">
+        <div class="fund-key">Azionista ctrl</div>
+        <div class="fund-val" style="font-size:13px">SoftBank ~80%</div>
+      </div>
+      <div class="fund-item">
+        <div class="fund-key">IPO</div>
+        <div class="fund-val" style="font-size:13px">Set 2023</div>
+      </div>
+    </div>
+
+    <div style="font-size:12px;color:#8b949e;margin-bottom:8px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px">Driver di Crescita</div>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <div style="display:flex;gap:8px;font-size:13px;color:#c9d1d9">
+        <span style="color:#3fb950">●</span> AI Edge Computing (inferenza on-device)
+      </div>
+      <div style="display:flex;gap:8px;font-size:13px;color:#c9d1d9">
+        <span style="color:#3fb950">●</span> Data Center (AWS Graviton, NVIDIA Grace)
+      </div>
+      <div style="display:flex;gap:8px;font-size:13px;color:#c9d1d9">
+        <span style="color:#3fb950">●</span> Automotive & IoT — nuovi mercati
+      </div>
+      <div style="display:flex;gap:8px;font-size:13px;color:#c9d1d9">
+        <span style="color:#3fb950">●</span> Architettura v9 → royalty più elevate
+      </div>
+    </div>
+
+    <div style="font-size:12px;color:#8b949e;margin: 12px 0 8px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px">Rischi Principali</div>
+    <div style="display:flex;flex-direction:column;gap:6px">
+      <div style="display:flex;gap:8px;font-size:13px;color:#c9d1d9">
+        <span style="color:#f85149">●</span> Valutazione premium — nessun margine di errore
+      </div>
+      <div style="display:flex;gap:8px;font-size:13px;color:#c9d1d9">
+        <span style="color:#f85149">●</span> Apple ~20% dei ricavi (concentrazione)
+      </div>
+      <div style="display:flex;gap:8px;font-size:13px;color:#f85149">
+        <span>●</span> Cina ~20-25% ricavi — rischio geopolitico
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ROW 2: Multi-Timeframe -->
+<div class="card" style="margin-bottom:20px">
+  <div class="card-title"><span class="dot" style="background:#58a6ff"></span>Analisi Multi-Timeframe — Weekly → 15m</div>
+  <table class="tf-table">
+    <thead>
+      <tr>
+        <th>Timeframe</th>
+        <th>Ruolo</th>
+        <th>Bias</th>
+        <th>RSI</th>
+        <th>MACD</th>
+        <th>Trend Strength</th>
+        <th>Momentum</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><div class="tf-label">1W — Weekly</div><div class="tf-note">Bias di trend</div></td>
+        <td style="color:#8b949e;font-size:12px">Direzione L/T</td>
+        <td><span class="pill pill-neut">Neutro/Rialzista</span></td>
+        <td><span class="bull">64.1 ▲</span></td>
+        <td><span class="bull">Bullish</span></td>
+        <td><span class="pill pill-weak">Debole</span></td>
+        <td><span class="bull">✓</span></td>
+      </tr>
+      <tr>
+        <td><div class="tf-label">1D — Daily</div><div class="tf-note">Setup swing</div></td>
+        <td style="color:#8b949e;font-size:12px">Golden Cross</td>
+        <td><span class="pill pill-bull">Bullish</span></td>
+        <td><span class="bull">65.7 ▲</span></td>
+        <td><span class="bull">Bullish</span></td>
+        <td><span class="pill pill-mod">Moderata</span></td>
+        <td><span class="bull">✓</span></td>
+      </tr>
+      <tr>
+        <td><div class="tf-label">4H — Quattro Ore</div><div class="tf-note">Zona ingresso</div></td>
+        <td style="color:#8b949e;font-size:12px">EMA Stack</td>
+        <td><span class="pill pill-bull">Bullish</span></td>
+        <td><span class="bull">64.9 ▼</span></td>
+        <td><span class="bull">Bullish</span></td>
+        <td><span class="pill pill-strong">Forte</span></td>
+        <td><span class="bull">✓</span></td>
+      </tr>
+      <tr>
+        <td><div class="tf-label">1H — Orario</div><div class="tf-note">Timing entrata</div></td>
+        <td style="color:#8b949e;font-size:12px">EMA 20 support</td>
+        <td><span class="pill pill-bull">Bullish</span></td>
+        <td><span class="neut">59.0 ▲</span></td>
+        <td><span class="bear">Bearish ⚠</span></td>
+        <td><span class="pill pill-weak">Debole</span></td>
+        <td><span class="bear">✗</span></td>
+      </tr>
+      <tr>
+        <td><div class="tf-label">15m — Quindici min</div><div class="tf-note">Esecuzione</div></td>
+        <td style="color:#8b949e;font-size:12px">VWAP / 9EMA</td>
+        <td><span class="pill pill-neut">Neutro</span></td>
+        <td><span class="neut">53.4 ▲</span></td>
+        <td><span class="bear">Bearish</span></td>
+        <td><span class="pill pill-weak">Debole</span></td>
+        <td><span class="bear">✗</span></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ROW 3: Pattern + Livelli -->
+<div class="grid-2">
+
+  <!-- PATTERN -->
+  <div class="card">
+    <div class="card-title"><span class="dot" style="background:#d29922"></span>Pattern Identificati</div>
+
+    <div class="pattern-item">
+      <div class="pattern-icon icon-bull">✨</div>
+      <div>
+        <div class="pattern-name bull">Golden Cross</div>
+        <div class="pattern-tf">Daily &nbsp;·&nbsp; EMA50 > EMA200</div>
+        <div class="pattern-desc">Segnale classico di inversione rialzista di medio termine. Uno dei pattern più affidabili.</div>
+      </div>
+    </div>
+
+    <div class="pattern-item">
+      <div class="pattern-icon icon-bull">📶</div>
+      <div>
+        <div class="pattern-name bull">Bullish EMA Stack</div>
+        <div class="pattern-tf">4H &nbsp;·&nbsp; Prezzo > EMA20 > EMA50 > EMA200</div>
+        <div class="pattern-desc">Allineamento perfetto delle medie mobili. Struttura di trend più solida tra tutti i timeframe.</div>
+      </div>
+    </div>
+
+    <div class="pattern-item">
+      <div class="pattern-icon icon-bull">📈</div>
+      <div>
+        <div class="pattern-name bull">RSI Rising Multi-TF</div>
+        <div class="pattern-tf">Weekly / Daily / 4H</div>
+        <div class="pattern-desc">RSI in salita su 3 timeframe simultaneamente — conferma accelerazione del momentum.</div>
+      </div>
+    </div>
+
+    <div class="pattern-item">
+      <div class="pattern-icon icon-bull">⚡</div>
+      <div>
+        <div class="pattern-name bull">MACD Bullish Crossover</div>
+        <div class="pattern-tf">Weekly / Daily / 4H</div>
+        <div class="pattern-desc">Crossover rialzista del MACD confermato sui timeframe di medio-lungo periodo.</div>
+      </div>
+    </div>
+
+    <div class="pattern-item">
+      <div class="pattern-icon icon-warn">⚠️</div>
+      <div>
+        <div class="pattern-name neut">MACD Divergenza Breve</div>
+        <div class="pattern-tf">1H / 15m &nbsp;·&nbsp; MACD Bearish</div>
+        <div class="pattern-desc">Segnale di possibile consolidamento o pullback a breve prima della prossima leg rialzista.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LIVELLI CHIAVE + RACCOMANDAZIONE -->
+  <div style="display:flex;flex-direction:column;gap:20px">
+
+    <div class="card">
+      <div class="card-title"><span class="dot" style="background:#f85149"></span>Livelli Chiave</div>
+
+      <div class="level-item">
+        <div class="level-left">
+          <div class="level-dot dot-res"></div>
+          <div>
+            <div class="level-name">Resistenza</div>
+            <div class="level-sub">Area da monitorare</div>
+          </div>
+        </div>
+        <div class="level-price bear">$170 — $175</div>
+      </div>
+
+      <div class="level-item">
+        <div class="level-left">
+          <div class="level-dot" style="background:#58a6ff"></div>
+          <div>
+            <div class="level-name">Prezzo Attuale</div>
+            <div class="level-sub">+1.30% oggi</div>
+          </div>
+        </div>
+        <div class="level-price blue">$162.07</div>
+      </div>
+
+      <div class="level-item">
+        <div class="level-left">
+          <div class="level-dot dot-sup"></div>
+          <div>
+            <div class="level-name">Supporto Immediato</div>
+            <div class="level-sub">EMA20 su 1H</div>
+          </div>
+        </div>
+        <div class="level-price bull">$159.91</div>
+      </div>
+
+      <div class="level-item">
+        <div class="level-left">
+          <div class="level-dot dot-sup"></div>
+          <div>
+            <div class="level-name">Supporto Forte</div>
+            <div class="level-sub">EMA20 su 4H — zona ideale d'ingresso</div>
+          </div>
+        </div>
+        <div class="level-price bull">$154.17</div>
+      </div>
+
+      <div class="level-item">
+        <div class="level-left">
+          <div class="level-dot dot-crit"></div>
+          <div>
+            <div class="level-name">Supporto Critico</div>
+            <div class="level-sub">EMA50 su 4H — stop loss area</div>
+          </div>
+        </div>
+        <div class="level-price neut">$145.21</div>
+      </div>
+    </div>
+
+    <div class="rec-box">
+      <div class="rec-title">RACCOMANDAZIONE OPERATIVA</div>
+      <div class="rec-action">BUY su Pullback</div>
+      <div class="rec-detail">
+        Entrare su ritracciamento verso la zona <strong>$154–$160</strong> (EMA 4H), con stop loss sotto <strong>$145</strong>. Il trend di lungo è confermato dal Golden Cross e dall'allineamento bullish su Weekly/Daily/4H.
+      </div>
+      <div class="rec-rules">
+        <div class="rec-rule">Weekly imposta il BIAS (solo direzione)</div>
+        <div class="rec-rule">Daily conferma il setup — Golden Cross attivo</div>
+        <div class="rec-rule">4H è il timeframe più forte — EMA Stack perfetto</div>
+        <div class="rec-rule">1H/15m: attendere mini-pullback prima di entrare</div>
+        <div class="rec-rule">Non operare mai contro Weekly + Daily combinati</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <strong>ARM Holdings plc (NASDAQ: ARM)</strong> — Analisi generata il 16 Aprile 2026<br>
+  Dati: TradingView / Yahoo Finance &nbsp;|&nbsp; Analisi: Claude Code (claude-sonnet-4-6)<br>
+  <span style="color:#f85149">⚠ Non è un consiglio finanziario. Effettuare sempre le proprie valutazioni prima di investire.</span>
+</div>
+
+</body>
+</html>
